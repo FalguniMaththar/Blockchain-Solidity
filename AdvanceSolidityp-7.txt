@@ -1,0 +1,80 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+// Importing from NPM: Chainlink interface for price feeds
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
+contract AdvancedFundMe {
+    // Mapping to track how much ETH each address has funded
+    mapping(address => uint256) public addressToAmountFunded; // Advanced Solidity: mapping
+
+    // Array to keep track of all funder addresses
+    address[] public funders; // Advanced Solidity: dynamic array
+
+    // Owner of the contract (the deployer)
+    address public owner; // Advanced Solidity: state variable for contract owner
+
+    // Constructor: executed once when contract is deployed
+    constructor() {
+        owner = msg.sender; // msg.sender is deployer, sets contract owner
+    }
+
+    // Fund function: anyone can send ETH
+    function fund() public payable {
+        require(msg.value > 0, "You need to send some ETH!"); // Require: threshold check
+        addressToAmountFunded[msg.sender] += msg.value; // Update mapping with funded amount
+        funders.push(msg.sender); // Add funder to array
+    }
+
+    // Get Chainlink price feed version
+    function getVersion() public view returns (uint256) {
+        // Interface usage: AggregatorV3Interface
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(
+            0x694AA1769357215DE4FAC081bf1f309aDC325306 // Sepolia ETH/USD price feed address
+        );
+        return priceFeed.version(); // Call interface function
+    }
+
+    // Get latest ETH/USD price
+    function getPrice() public view returns (uint256) {
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(
+            0x694AA1769357215DE4FAC081bf1f309aDC325306
+        );
+        // Tuple destructuring: ignore unused variables with commas
+        (, int256 answer, , , ) = priceFeed.latestRoundData(); // latestRoundData returns tuple
+        return uint256(answer * 1e10); // Convert 8 decimals to 18 decimals (matching units)
+    }
+
+    // Convert ETH amount to USD
+    function getConversionRate(uint256 ethAmount) public view returns (uint256) {
+        uint256 ethPrice = getPrice(); // Call getPrice()
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18; // Match ETH units (wei -> ether)
+        return ethAmountInUsd;
+    }
+
+    // Modifier to restrict functions to only owner
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not contract owner"); // Equality check (==)
+        _; // Continue execution of the function
+    }
+
+    // Withdraw all ETH from contract (owner only)
+    function withdraw() public onlyOwner {
+        // Transfer ETH using call (recommended over transfer/send)
+        (bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(success, "Transfer failed"); // Revert if transfer fails
+
+        // Reset mapping for all funders
+        for (uint256 i = 0; i < funders.length; i++) { // For loop, array length
+            address funder = funders[i];
+            addressToAmountFunded[funder] = 0; // Reset funded amount
+        }
+
+        funders = new address[](0) ; // Reset funders array
+    }
+
+    // Helper function: get contract balance
+    function getBalance() public view returns (uint256) {
+        return address(this).balance; // 'this' refers to the contract itself
+    }
+}

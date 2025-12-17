@@ -1,0 +1,138 @@
+python-m pip install --user pipx
+python -m pipx ensurepath
+
+setx PATH "%PATH%;C:\Users\<YourUser>\AppData\Roaming\Python\Python313\Scripts"
+
+set env variable in edit env
+in user
+add new
+name it pipx and past path
+
+C:\Users\<YourUser>\AppData\Roaming\Python\Python313\Scripts
+
+pipx -m install eth-brownie
+
+after installing brownie---------------------------
+ 
+brownie init
+ 
+now in contracts make simplestorage.sol------------------
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity >=0.6.0 <0.9.0;
+
+contract SimpleStorage {
+
+    uint256 favoriteNumber;
+
+    // This is a comment!
+    struct People {
+        uint256 favoriteNumber;
+        string name;
+    }
+
+    People[] public people;
+    mapping(string => uint256) public nameToFavoriteNumber;
+
+    function store(uint256 _favoriteNumber) public {
+        favoriteNumber = _favoriteNumber;
+    }
+    
+    function retrieve() public view returns (uint256){
+        return favoriteNumber;
+    }
+
+    function addPerson(string memory _name, uint256 _favoriteNumber) public {
+        people.push(People(_favoriteNumber, _name));
+        nameToFavoriteNumber[_name] = _favoriteNumber;
+    }
+}
+---------------------------------------------------------------
+
+brownie compile
+
+in scripts deploy.py--------------------------------
+
+from brownie import accounts , SimpleStorage
+import os
+
+def deploy_simple_storage():
+    account= accounts[0]
+    # account = accounts.load("freecode")
+    # print(account)
+    # account =os.getenv("PRIVATE_KEY")
+    simple_storage= SimpleStorage.deploy({"from":account}) #this account is from brownie ganache
+    # print(simple_storage)
+    stored_value=simple_storage.retrieve() 
+    print(stored_value)
+    transaction = simple_storage.store(15,{"from":account})
+    transaction.wait(1)
+    updated_stored_value=simple_storage.retrieve() 
+    print(updated_stored_value)
+    
+    
+def main():
+    deploy_simple_storage()
+
+---------------------------------------------------------------
+
+brownie run scripts/deploy.py
+
+--------we are using freecodecamp-accpunt this to only lern we will not going use it in program so after lern just put it in comment---------------------
+
+brownie accounts new freecodecamp-accpunt 
+
+enter  private kye of your metamask
+
+brownie accounts list
+
+enter password of meta mask for freecodecamp-accounts
+
+create .env file by rightclick on bottom of all file rightclick on empty space--------------------------
+
+export PRIVATE_KEY=cdf13d2813a8f89dc10accba 8054252892dae926e83f017b00eae6ccc161
+replase your private key---------------------
+---------------------------------------------
+brownie-config.yaml make same way as above------------
+dotenv: .env
+------------------------------
+
+use account 0
+
+make test_simple_storage.py in test folder-------------------
+
+from brownie import accounts , SimpleStorage
+
+def test_simple_storage():
+    account=accounts[0]
+    
+    simple_storage= SimpleStorage.deploy({"from":account})
+    starting_value=simple_storage.retrieve()
+    expected=0
+    
+    assert starting_value == expected
+    
+def test_updated_value():
+    account  = accounts[0]
+    simple_storage= SimpleStorage.deploy({"from":account})
+    
+    expected = 15
+    
+    simple_storage.store(expected,{"from":account})
+    
+    assert expected == simple_storage.retrieve()
+    
+-----------------------------------------------
+
+browine test
+
+test is passed if we show green dots at the end 
+
+------------user this command for test only one function------------
+
+brownie test -k test_updating_storage
+
+---------------------
+
+brownie network list

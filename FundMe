@@ -1,0 +1,72 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
+/*
+    FUND ME + CHAINLINK PRICE VIEW
+    ------------------------------
+    Features:
+    • Minimum funding = 0.01 ETH
+    • Track funders & amounts
+    • Withdraw all funds
+    • Read ETH/USD price from Chainlink
+*/
+
+contract ChainLinkFund {
+    AggregatorV3Interface internal priceFeed;
+
+    // Track funded amounts
+    mapping(address => uint256) public addressToAmountFunded;
+    address[] public funders;
+
+    // Minimum contribution (0.01 ETH)
+    uint256 public constant MINIMUM_ETH = 0.01 ether;
+
+    // Owner (optional)
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+
+        // ETH/USD Chainlink price feed (Sepolia)
+        priceFeed = AggregatorV3Interface(
+            0x694AA1769357215DE4FAC081bf1f309aDC325306
+        );
+    }
+
+    // FUND THE CONTRACT
+    function fund() public payable {
+        require(msg.value >= MINIMUM_ETH, "Send at least 0.01 ETH!");
+
+        addressToAmountFunded[msg.sender] += msg.value;
+        funders.push(msg.sender);
+    }
+
+    // GET CONTRACT BALANCE
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    // WITHDRAW — only owner
+    function withdraw() public {
+        require(msg.sender == owner, "Only owner can withdraw");
+
+        (bool success, ) = owner.call{value: address(this).balance}("");
+        require(success, "Withdraw failed");
+
+        // Reset funders
+        for (uint256 i = 0; i < funders.length; i++) {
+            addressToAmountFunded[funders[i]] = 0;
+        }
+        funders = new address[](0);
+    }
+
+    // READ ETH/USD PRICE (clean format)
+    function getLatestPrice() public view returns (int256) {
+        (, int256 price, , , ) = priceFeed.latestRoundData();
+
+        // Remove Chainlink’s 8 decimals
+        return price / 1e8;
+    }
+}

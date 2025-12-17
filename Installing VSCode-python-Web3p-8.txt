@@ -1,0 +1,166 @@
+Web3.py Simple Storage - Setup & Installation Guide
+
+1. Developer Bootcamp Setup Instructions
+
+Before starting, ensure you have the following installed. If not, follow the installation instructions below:
+
+- MetaMask: Browser wallet for Ethereum test networks.
+    Installation:
+    1. Go to https://metamask.io/
+    2. Download the extension for Chrome/Firefox/Edge.
+    3. Create a wallet or import existing one.
+    4. Add Goerli Test Network for testing contracts.
+
+- VSCode: Code editor.
+    Installation:
+    1. Go to https://code.visualstudio.com/
+    2. Download and install VSCode for your OS (Windows/Mac/Linux).
+    3. Open VSCode after installation.
+
+- Python: Version 3.9+ recommended.
+    Installation:
+    1. Go to https://www.python.org/downloads/
+    2. Download latest Python 3.x installer.
+    3. During installation, check "Add Python to PATH".
+    4. Verify installation in terminal:
+        python --version
+        pip --version
+
+- Node.js: For optional JS scripts and Solidity compilation.
+    Installation:
+    1. Go to https://nodejs.org/en/download/
+    2. Download and install LTS version.
+    3. Verify installation:
+        node -v
+        npm -v
+
+- Web3.py: Python library to interact with Ethereum blockchain.
+    Installation (after Python is installed):
+        pip install web3
+        pip install py-solc-x
+
+---
+
+2. VSCode Setup
+
+- Open VSCode.
+- Recommended extensions:
+    - Python (by Microsoft)
+    - Solidity (by Juan Blanco)
+    - Prettier - Code formatter
+    - Python Black (formatter)
+    - Web3 helper or Solidity snippet extensions
+
+2.1 VSCode Crash Course
+
+- Explorer: Navigate files and folders.
+- Search: Ctrl + Shift + F
+- Source Control: Git integration
+- Run & Debug: Execute Python or Solidity scripts
+
+2.2 VSCode Shortcuts
+
+Windows/Linux:
+- Open File: Ctrl + O
+- Save File: Ctrl + S
+- Split Editor: Ctrl + \
+- Terminal: Ctrl + `
+
+MacOS:
+- Open File: Cmd + O
+- Save File: Cmd + S
+- Split Editor: Cmd + \
+- Terminal: Ctrl + `
+
+---
+
+3. Python Setup
+
+- Verify Python installation:
+    python --version
+    pip --version
+- Troubleshooting:
+    - If python not recognized, check PATH variable.
+    - Use python3 if multiple versions installed.
+
+---‐--------
+
+4. Terminal Setup in VSCode
+
+- Open integrated VSCode terminal: Ctrl + `
+- Create virtual environment:
+    python -m venv venv
+- Activate virtual environment:
+    - Mac/Linux: source venv/bin/activate
+    - Windows: venv\Scripts\activate
+- Install Web3.py:
+    pip install web3
+    pip install py-solc-x
+
+---
+
+5. Project Folder Setup
+
+- Make project directory:
+    mkdir web3_py_simple_storage
+    cd web3_py_simple_storage
+- Open folder in VSCode:
+    code .
+
+---
+
+6. Creating a New File
+
+- Click New File → deploy.py
+- Save file before writing code
+- Use .py for Python scripts, .sol for Solidity contracts
+
+---
+
+7. Syntax Highlighting
+
+- Ensure VSCode recognizes file type (.py for Python, .sol for Solidity)
+- Solidity extension provides syntax highlighting for smart contracts
+
+---
+
+8. Linting & Compiler Version
+
+- Enable Python Linter:
+    VSCode → Python → Linting → Enable
+- Solidity Compiler:
+    - Open Solidity tab → Select compiler version matching your contract (0.8.x recommended)
+    - Enable Format on Save for auto-formatting
+
+---
+
+9. VSCode Solidity Settings
+
+- Formatting & Format on Save:
+    Settings → Extensions → Solidity → Format on Save → Enable
+- Solidity Prettier:
+    Ensures readable and consistent Solidity code
+- Python Black:
+    Auto-format Python code in deploy.py
+- Pip:
+    Ensure all Python packages installed via pip:
+        pip install web3
+        pip install py-solc-x
+
+---
+
+10. Reminder
+
+- Always save your files before executing
+- Activate your virtual environment before running Python scripts
+- Check Solidity compiler version matches your contract
+
+---
+
+11. Optional Tips
+
+- Keep MetaMask logged in while testing contracts
+- Use Goerli test ETH for deploying contracts
+- Always use virtual environments for Python projects
+- Keep VSCode and extensions updated
+
